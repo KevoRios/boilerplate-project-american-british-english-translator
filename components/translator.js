@@ -18,13 +18,20 @@ class Translator {
       const uk = americanToBritishTitles[us];
       this.britishToAmericanTitles[uk] = us;
     });
+
+    // flag para resaltar o no
+    this.highlightEnabled = false;
   }
 
   highlight(text) {
+    if (!this.highlightEnabled) return text;
     return `<span class="highlight">${text}</span>`;
   }
 
-  translate(text, locale) {
+  // tercer parámetro opcional: highlight = false
+  translate(text, locale, highlight = false) {
+    this.highlightEnabled = !!highlight;
+
     let result = text;
 
     if (locale === 'american-to-british') {
@@ -33,6 +40,8 @@ class Translator {
       result = this.translateBritishToAmerican(result);
     }
 
+    // (opcional) reset para no dejar el flag “pegado” a otros usos
+    this.highlightEnabled = false;
     return result;
   }
 
@@ -64,16 +73,18 @@ class Translator {
     });
 
     // 3) American-only (trashcan → bin, etc.)
-    Object.keys(americanOnly).sort((a, b) => b.length - a.length).forEach(us => {
-      const uk = americanOnly[us];
-      const regex = new RegExp(`\\b${us}\\b`, 'gi');
-      result = result.replace(regex, match => {
-        const out = match[0] === match[0].toUpperCase()
-          ? uk.charAt(0).toUpperCase() + uk.slice(1)
-          : uk;
-        return this.highlight(out);
+    Object.keys(americanOnly)
+      .sort((a, b) => b.length - a.length)
+      .forEach(us => {
+        const uk = americanOnly[us];
+        const regex = new RegExp(`\\b${us}\\b`, 'gi');
+        result = result.replace(regex, match => {
+          const out = match[0] === match[0].toUpperCase()
+            ? uk.charAt(0).toUpperCase() + uk.slice(1)
+            : uk;
+          return this.highlight(out);
+        });
       });
-    });
 
     // 4) Horas 3:15 → 3.15
     result = result.replace(/(\d{1,2}):(\d{2})/g, (_m, h, m) => {
@@ -111,16 +122,18 @@ class Translator {
     });
 
     // 3) British-only (car boot sale → swap meet, etc.)
-    Object.keys(britishOnly).sort((a, b) => b.length - a.length).forEach(uk => {
-      const us = britishOnly[uk];
-      const regex = new RegExp(`\\b${uk}\\b`, 'gi');
-      result = result.replace(regex, match => {
-        const out = match[0] === match[0].toUpperCase()
-          ? us.charAt(0).toUpperCase() + us.slice(1)
-          : us;
-        return this.highlight(out);
+    Object.keys(britishOnly)
+      .sort((a, b) => b.length - a.length)
+      .forEach(uk => {
+        const us = britishOnly[uk];
+        const regex = new RegExp(`\\b${uk}\\b`, 'gi');
+        result = result.replace(regex, match => {
+          const out = match[0] === match[0].toUpperCase()
+            ? us.charAt(0).toUpperCase() + us.slice(1)
+            : us;
+          return this.highlight(out);
+        });
       });
-    });
 
     // 4) Horas 3.15 → 3:15
     result = result.replace(/(\d{1,2})\.(\d{2})/g, (_m, h, m) => {
@@ -133,3 +146,4 @@ class Translator {
 }
 
 module.exports = Translator;
+
