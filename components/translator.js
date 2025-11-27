@@ -18,34 +18,26 @@ class Translator {
       const uk = americanToBritishTitles[us];
       this.britishToAmericanTitles[uk] = us;
     });
-
-    // flag para resaltar o no
-    this.highlightEnabled = false;
   }
 
   highlight(text) {
-    if (!this.highlightEnabled) return text;
     return `<span class="highlight">${text}</span>`;
   }
 
-  // tercer parámetro opcional: highlight = false
+  // 👉 ahora acepta tercer parámetro
   translate(text, locale, highlight = false) {
-    this.highlightEnabled = !!highlight;
-
     let result = text;
 
     if (locale === 'american-to-british') {
-      result = this.translateAmericanToBritish(result);
+      result = this.translateAmericanToBritish(result, highlight);
     } else if (locale === 'british-to-american') {
-      result = this.translateBritishToAmerican(result);
+      result = this.translateBritishToAmerican(result, highlight);
     }
 
-    // (opcional) reset para no dejar el flag “pegado” a otros usos
-    this.highlightEnabled = false;
     return result;
   }
 
-  translateAmericanToBritish(text) {
+  translateAmericanToBritish(text, highlight) {
     let result = text;
 
     // 1) Títulos (Mr. → Mr, etc.)
@@ -56,7 +48,7 @@ class Translator {
         const out = match[0] === match[0].toUpperCase()
           ? ukTitle.charAt(0).toUpperCase() + ukTitle.slice(1)
           : ukTitle;
-        return this.highlight(out);
+        return highlight ? this.highlight(out) : out;
       });
     });
 
@@ -68,33 +60,32 @@ class Translator {
         const out = match[0] === match[0].toUpperCase()
           ? uk.charAt(0).toUpperCase() + uk.slice(1)
           : uk;
-        return this.highlight(out);
+        return highlight ? this.highlight(out) : out;
       });
     });
 
     // 3) American-only (trashcan → bin, etc.)
-    Object.keys(americanOnly)
-      .sort((a, b) => b.length - a.length)
-      .forEach(us => {
-        const uk = americanOnly[us];
-        const regex = new RegExp(`\\b${us}\\b`, 'gi');
-        result = result.replace(regex, match => {
-          const out = match[0] === match[0].toUpperCase()
-            ? uk.charAt(0).toUpperCase() + uk.slice(1)
-            : uk;
-          return this.highlight(out);
-        });
+    Object.keys(americanOnly).sort((a, b) => b.length - a.length).forEach(us => {
+      const uk = americanOnly[us];
+      const regex = new RegExp(`\\b${us}\\b`, 'gi');
+      result = result.replace(regex, match => {
+        const out = match[0] === match[0].toUpperCase()
+          ? uk.charAt(0).toUpperCase() + uk.slice(1)
+          : uk;
+        return highlight ? this.highlight(out) : out;
       });
+    });
 
     // 4) Horas 3:15 → 3.15
     result = result.replace(/(\d{1,2}):(\d{2})/g, (_m, h, m) => {
-      return this.highlight(`${h}.${m}`);
+      const out = `${h}.${m}`;
+      return highlight ? this.highlight(out) : out;
     });
 
     return result;
   }
 
-  translateBritishToAmerican(text) {
+  translateBritishToAmerican(text, highlight) {
     let result = text;
 
     // 1) Títulos (Mr → Mr., etc.)
@@ -105,7 +96,7 @@ class Translator {
         const out = match[0] === match[0].toUpperCase()
           ? usTitle.charAt(0).toUpperCase() + usTitle.slice(1)
           : usTitle;
-        return this.highlight(out);
+        return highlight ? this.highlight(out) : out;
       });
     });
 
@@ -117,27 +108,26 @@ class Translator {
         const out = match[0] === match[0].toUpperCase()
           ? us.charAt(0).toUpperCase() + us.slice(1)
           : us;
-        return this.highlight(out);
+        return highlight ? this.highlight(out) : out;
       });
     });
 
     // 3) British-only (car boot sale → swap meet, etc.)
-    Object.keys(britishOnly)
-      .sort((a, b) => b.length - a.length)
-      .forEach(uk => {
-        const us = britishOnly[uk];
-        const regex = new RegExp(`\\b${uk}\\b`, 'gi');
-        result = result.replace(regex, match => {
-          const out = match[0] === match[0].toUpperCase()
-            ? us.charAt(0).toUpperCase() + us.slice(1)
-            : us;
-          return this.highlight(out);
-        });
+    Object.keys(britishOnly).sort((a, b) => b.length - a.length).forEach(uk => {
+      const us = britishOnly[uk];
+      const regex = new RegExp(`\\b${uk}\\b`, 'gi');
+      result = result.replace(regex, match => {
+        const out = match[0] === match[0].toUpperCase()
+          ? us.charAt(0).toUpperCase() + us.slice(1)
+          : us;
+        return highlight ? this.highlight(out) : out;
       });
+    });
 
     // 4) Horas 3.15 → 3:15
     result = result.replace(/(\d{1,2})\.(\d{2})/g, (_m, h, m) => {
-      return this.highlight(`${h}:${m}`);
+      const out = `${h}:${m}`;
+      return highlight ? this.highlight(out) : out;
     });
 
     return result;
@@ -146,4 +136,3 @@ class Translator {
 }
 
 module.exports = Translator;
-
