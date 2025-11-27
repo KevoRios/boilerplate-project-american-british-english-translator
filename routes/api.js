@@ -21,7 +21,7 @@ module.exports = function (app) {
         return res.json({ error: 'Invalid value for locale field' });
       }
 
-      // ⬇️ ahora con resaltado activado para la API
+      // 👉 usar highlight = true para la API
       const translation = translator.translate(text, locale, true);
 
       if (translation === text) {
@@ -31,9 +31,6 @@ module.exports = function (app) {
         });
       }
 
-      return res.json({
-        text,
-        translation
-      });
+      return res.json({ text, translation });
     });
 };
