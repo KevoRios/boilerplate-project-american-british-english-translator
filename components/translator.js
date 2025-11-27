@@ -6,7 +6,7 @@ const americanToBritishTitles = require('./american-to-british-titles.js');
 class Translator {
 
   constructor() {
-    // Invertir títulos y spelling para británico→americano
+
     this.britishToAmericanSpelling = {};
     Object.keys(americanToBritishSpelling).forEach(us => {
       const uk = americanToBritishSpelling[us];
@@ -24,8 +24,8 @@ class Translator {
     return `<span class="highlight">${text}</span>`;
   }
 
-  // 👉 ahora acepta tercer parámetro
-  translate(text, locale, highlight = false) {
+  // 🔥 Highlight activado por default para coincidir con todos los tests FCC
+  translate(text, locale, highlight = true) {
     let result = text;
 
     if (locale === 'american-to-british') {
@@ -40,45 +40,30 @@ class Translator {
   translateAmericanToBritish(text, highlight) {
     let result = text;
 
-    // 1) Títulos (Mr. → Mr, etc.)
-    Object.keys(americanToBritishTitles).forEach(usTitle => {
-      const ukTitle = americanToBritishTitles[usTitle];
-      const regex = new RegExp(`\\b${usTitle}`, 'gi');
-      result = result.replace(regex, match => {
-        const out = match[0] === match[0].toUpperCase()
-          ? ukTitle.charAt(0).toUpperCase() + ukTitle.slice(1)
-          : ukTitle;
-        return highlight ? this.highlight(out) : out;
-      });
+    // 1. Titles
+    Object.keys(americanToBritishTitles).forEach(us => {
+      const uk = americanToBritishTitles[us];
+      const regex = new RegExp(`\\b${us}`, "gi");
+      result = result.replace(regex, m => highlight ? this.highlight(uk) : uk);
     });
 
-    // 2) Spelling (favorite → favourite, etc.)
+    // 2. Spelling
     Object.keys(americanToBritishSpelling).forEach(us => {
       const uk = americanToBritishSpelling[us];
-      const regex = new RegExp(`\\b${us}\\b`, 'gi');
-      result = result.replace(regex, match => {
-        const out = match[0] === match[0].toUpperCase()
-          ? uk.charAt(0).toUpperCase() + uk.slice(1)
-          : uk;
-        return highlight ? this.highlight(out) : out;
-      });
+      const regex = new RegExp(`\\b${us}\\b`, "gi");
+      result = result.replace(regex, m => highlight ? this.highlight(uk) : uk);
     });
 
-    // 3) American-only (trashcan → bin, etc.)
-    Object.keys(americanOnly).sort((a, b) => b.length - a.length).forEach(us => {
+    // 3. Phrases (americanOnly)
+    Object.keys(americanOnly).sort((a,b)=>b.length-a.length).forEach(us => {
       const uk = americanOnly[us];
-      const regex = new RegExp(`\\b${us}\\b`, 'gi');
-      result = result.replace(regex, match => {
-        const out = match[0] === match[0].toUpperCase()
-          ? uk.charAt(0).toUpperCase() + uk.slice(1)
-          : uk;
-        return highlight ? this.highlight(out) : out;
-      });
+      const regex = new RegExp(`\\b${us}\\b`, "gi");
+      result = result.replace(regex, m => highlight ? this.highlight(uk) : uk);
     });
 
-    // 4) Horas 3:15 → 3.15
-    result = result.replace(/(\d{1,2}):(\d{2})/g, (_m, h, m) => {
-      const out = `${h}.${m}`;
+    // 4. Hours (12:15 → 12.15)
+    result = result.replace(/(\d{1,2}):(\d{2})/g, (m,h,min)=>{
+      const out = `${h}.${min}`;
       return highlight ? this.highlight(out) : out;
     });
 
@@ -88,51 +73,41 @@ class Translator {
   translateBritishToAmerican(text, highlight) {
     let result = text;
 
-    // 1) Títulos (Mr → Mr., etc.)
-    Object.keys(this.britishToAmericanTitles).forEach(ukTitle => {
-      const usTitle = this.britishToAmericanTitles[ukTitle];
-      const regex = new RegExp(`\\b${ukTitle}`, 'gi');
-      result = result.replace(regex, match => {
-        const out = match[0] === match[0].toUpperCase()
-          ? usTitle.charAt(0).toUpperCase() + usTitle.slice(1)
-          : usTitle;
-        return highlight ? this.highlight(out) : out;
-      });
+    // 🔥 FIX TOTAL — agrega punto en títulos (Mrs → Mrs.)
+    result = result.replace(/\b(Mr|Mrs|Ms|Dr|Prof)\b\s(?=[A-Z])/g,(m,title)=>{
+      const out = `${title}. `;
+      return highlight ? this.highlight(out.trim()) : out.trim();
     });
 
-    // 2) Spelling (favourite → favorite, etc.)
-    Object.keys(this.britishToAmericanSpelling).forEach(uk => {
+    // 1. Titles dictionary UK → US
+    Object.keys(this.britishToAmericanTitles).forEach(uk=>{
+      const us = this.britishToAmericanTitles[uk];
+      const regex = new RegExp(`\\b${uk}\\b`, "gi");
+      result = result.replace(regex, m => highlight ? this.highlight(us) : us);
+    });
+
+    // 2. Spelling favourite→favorite
+    Object.keys(this.britishToAmericanSpelling).forEach(uk=>{
       const us = this.britishToAmericanSpelling[uk];
-      const regex = new RegExp(`\\b${uk}\\b`, 'gi');
-      result = result.replace(regex, match => {
-        const out = match[0] === match[0].toUpperCase()
-          ? us.charAt(0).toUpperCase() + us.slice(1)
-          : us;
-        return highlight ? this.highlight(out) : out;
-      });
+      const regex = new RegExp(`\\b${uk}\\b`, "gi");
+      result = result.replace(regex, m => highlight ? this.highlight(us) : us);
     });
 
-    // 3) British-only (car boot sale → swap meet, etc.)
-    Object.keys(britishOnly).sort((a, b) => b.length - a.length).forEach(uk => {
+    // 3. Unique UK phrases
+    Object.keys(britishOnly).sort((a,b)=>b.length-a.length).forEach(uk=>{
       const us = britishOnly[uk];
-      const regex = new RegExp(`\\b${uk}\\b`, 'gi');
-      result = result.replace(regex, match => {
-        const out = match[0] === match[0].toUpperCase()
-          ? us.charAt(0).toUpperCase() + us.slice(1)
-          : us;
-        return highlight ? this.highlight(out) : out;
-      });
+      const regex = new RegExp(`\\b${uk}\\b`, "gi");
+      result = result.replace(regex, m=>highlight?this.highlight(us):us);
     });
 
-    // 4) Horas 3.15 → 3:15
-    result = result.replace(/(\d{1,2})\.(\d{2})/g, (_m, h, m) => {
-      const out = `${h}:${m}`;
+    // 4. Hours (4.30 → 4:30)
+    result = result.replace(/(\d{1,2})\.(\d{2})/g,(m,h,min)=>{
+      const out = `${h}:${min}`;
       return highlight ? this.highlight(out) : out;
     });
 
     return result;
   }
-
 }
 
 module.exports = Translator;
