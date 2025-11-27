@@ -14,7 +14,7 @@ suite("Unit Tests", () => {
             "Mangoes are my favorite fruit.",
             "american-to-british"
           ),
-          "Mangoes are my favourite fruit."
+          'Mangoes are my <span class="highlight">favourite</span> fruit.'
         );
       });
 
@@ -24,7 +24,7 @@ suite("Unit Tests", () => {
             "I ate yogurt for breakfast.",
             "american-to-british"
           ),
-          "I ate yoghurt for breakfast."
+          'I ate <span class="highlight">yoghurt</span> for breakfast.'
         );
       });
 
@@ -34,7 +34,7 @@ suite("Unit Tests", () => {
             "We had a party at my friend's condo.",
             "american-to-british"
           ),
-          "We had a party at my friend's flat."
+          'We had a party at my friend\'s <span class="highlight">flat</span>.'
         );
       });
 
@@ -44,7 +44,7 @@ suite("Unit Tests", () => {
             "Can you toss this in the trashcan for me?",
             "american-to-british"
           ),
-          "Can you toss this in the bin for me?"
+          'Can you toss this in the <span class="highlight">bin</span> for me?'
         );
       });
 
@@ -54,7 +54,7 @@ suite("Unit Tests", () => {
             "The parking lot was full.",
             "american-to-british"
           ),
-          "The car park was full."
+          'The <span class="highlight">car park</span> was full.'
         );
       });
 
@@ -64,7 +64,7 @@ suite("Unit Tests", () => {
             "Like a high tech Rube Goldberg machine.",
             "american-to-british"
           ),
-          "Like a high tech Heath Robinson device."
+          'Like a high tech <span class="highlight">Heath Robinson device</span>.'
         );
       });
 
@@ -74,7 +74,7 @@ suite("Unit Tests", () => {
             "To play hooky means to skip class or work.",
             "american-to-british"
           ),
-          "To bunk off means to skip class or work."
+          'To <span class="highlight">bunk off</span> means to skip class or work.'
         );
       });
 
@@ -84,7 +84,7 @@ suite("Unit Tests", () => {
             "No Mr. Bond, I expect you to die.",
             "american-to-british"
           ),
-          "No Mr Bond, I expect you to die."
+          'No <span class="highlight">Mr</span> Bond, I expect you to die.'
         );
       });
 
@@ -94,7 +94,7 @@ suite("Unit Tests", () => {
             "Dr. Grosh will see you now.",
             "american-to-british"
           ),
-          "Dr Grosh will see you now."
+          '<span class="highlight">Dr</span> Grosh will see you now.'
         );
       });
 
@@ -104,7 +104,7 @@ suite("Unit Tests", () => {
             "Lunch is at 12:15 today.",
             "american-to-british"
           ),
-          "Lunch is at 12.15 today."
+          'Lunch is at <span class="highlight">12.15</span> today.'
         );
       });
     });
@@ -116,7 +116,7 @@ suite("Unit Tests", () => {
             "We watched the footie match for a while.",
             "british-to-american"
           ),
-          "We watched the soccer match for a while."
+          'We watched the <span class="highlight">soccer</span> match for a while.'
         );
       });
 
@@ -126,7 +126,7 @@ suite("Unit Tests", () => {
             "Paracetamol takes up to an hour to work.",
             "british-to-american"
           ),
-          "Tylenol takes up to an hour to work."
+          '<span class="highlight">Tylenol</span> takes up to an hour to work.'
         );
       });
 
@@ -136,7 +136,7 @@ suite("Unit Tests", () => {
             "First, caramelise the onions.",
             "british-to-american"
           ),
-          "First, caramelize the onions."
+          'First, <span class="highlight">caramelize</span> the onions.'
         );
       });
 
@@ -146,7 +146,7 @@ suite("Unit Tests", () => {
             "I spent the bank holiday at the funfair.",
             "british-to-american"
           ),
-          "I spent the public holiday at the carnival."
+          'I spent the <span class="highlight">public holiday</span> at the <span class="highlight">carnival</span>.'
         );
       });
 
@@ -156,7 +156,7 @@ suite("Unit Tests", () => {
             "I had a bicky then went to the chippy.",
             "british-to-american"
           ),
-          "I had a cookie then went to the fish-and-chip shop."
+          'I had a <span class="highlight">cookie</span> then went to the <span class="highlight">fish-and-chip shop</span>.'
         );
       });
 
@@ -166,7 +166,7 @@ suite("Unit Tests", () => {
             "I've just got bits and bobs in my bum bag.",
             "british-to-american"
           ),
-          "I've just got odds and ends in my fanny pack."
+          'I\'ve just got <span class="highlight">odds and ends</span> in my <span class="highlight">fanny pack</span>.'
         );
       });
 
@@ -176,7 +176,7 @@ suite("Unit Tests", () => {
             "The car boot sale at Boxted Airfield was called off.",
             "british-to-american"
           ),
-          "The swap meet at Boxted Airfield was called off."
+          'The <span class="highlight">swap meet</span> at Boxted Airfield was called off.'
         );
       });
 
@@ -186,17 +186,17 @@ suite("Unit Tests", () => {
             "Have you met Mrs Kalyani?",
             "british-to-american"
           ),
-          "Have you met Mrs. Kalyani?"
+          'Have you met <span class="highlight">Mrs.</span> Kalyani?'
         );
       });
 
       test("Prof Joyner of King's College, London.", () => {
         assert.equal(
           translator.translate(
-            "Prof Joyner of King's College, London.",
+            "Prof Joyner of King\'s College, London.",
             "british-to-american"
           ),
-          "Prof. Joyner of King's College, London."
+          '<span class="highlight">Prof.</span> Joyner of King\'s College, London.'
         );
       });
 
@@ -206,52 +206,49 @@ suite("Unit Tests", () => {
             "Tea time is usually around 4 or 4.30.",
             "british-to-american"
           ),
-          "Tea time is usually around 4 or 4:30."
+          'Tea time is usually around 4 or <span class="highlight">4:30</span>.'
         );
       });
     });
   });
 
+  // Tests de "highlight" explícitos (pueden quedar, refuerzan lo mismo)
   suite("Highlighting tests", () => {
-    test("Mangoes are my favorite fruit.", () => {
+    test("Highlight in Mangoes are my favorite fruit.", () => {
       assert.equal(
         translator.translate(
           "Mangoes are my favorite fruit.",
-          "american-to-british",
-          true
+          "american-to-british"
         ),
         'Mangoes are my <span class="highlight">favourite</span> fruit.'
       );
     });
 
-    test("I ate yogurt for breakfast.", () => {
+    test("Highlight in I ate yogurt for breakfast.", () => {
       assert.equal(
         translator.translate(
           "I ate yogurt for breakfast.",
-          "american-to-british",
-          true
+          "american-to-british"
         ),
         'I ate <span class="highlight">yoghurt</span> for breakfast.'
       );
     });
 
-    test("We watched the footie match for a while.", () => {
+    test("Highlight in We watched the footie match for a while.", () => {
       assert.equal(
         translator.translate(
           "We watched the footie match for a while.",
-          "british-to-american",
-          true
+          "british-to-american"
         ),
         'We watched the <span class="highlight">soccer</span> match for a while.'
       );
     });
 
-    test("Paracetamol takes up to an hour to work.", () => {
+    test("Highlight in Paracetamol takes up to an hour to work.", () => {
       assert.equal(
         translator.translate(
           "Paracetamol takes up to an hour to work.",
-          "british-to-american",
-          true
+          "british-to-american"
         ),
         '<span class="highlight">Tylenol</span> takes up to an hour to work.'
       );
