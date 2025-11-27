@@ -25,7 +25,7 @@ class Translator {
   }
 
   // 👉 ahora acepta tercer parámetro
-  translate(text, locale, highlight = false) {
+  translate(text, locale, highlight = true) {
     let result = text;
 
     if (locale === 'american-to-british') {
